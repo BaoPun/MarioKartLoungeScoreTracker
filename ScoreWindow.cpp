@@ -9,7 +9,6 @@ ScoreWindow::ScoreWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::Scor
     this->ui->tag_input->installEventFilter(this);
     this->ui->point_input->installEventFilter(this);
 
-
     // Initializing race states
     this->race_nbr = 1;
     this->race_placement = 1;
