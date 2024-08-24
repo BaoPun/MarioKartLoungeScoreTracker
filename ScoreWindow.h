@@ -29,7 +29,8 @@ private:
     int race_nbr;
     int race_placement;
 
-
+    void set_team_additions_display(bool);
+    void set_point_allocations_display(bool);
     int get_points_from_placement();
     void update_score_differences();
 

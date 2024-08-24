@@ -14,6 +14,9 @@ ScoreWindow::ScoreWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::Scor
     this->race_placement = 1;
 }
 
+/**
+ * @brief Destructor that deallocates the layouts and the entire window safely
+ */
 ScoreWindow::~ScoreWindow(){
     this->delete_layouts();
     if(this->ui != nullptr){
@@ -22,6 +25,9 @@ ScoreWindow::~ScoreWindow(){
     }
 }
 
+/**
+ * @brief Submits a team with specified tag onto the vector.  Invalid if team name already exists.
+ */
 void ScoreWindow::process_tag(){
     QString tag = this->ui->tag_input->toPlainText().trimmed();
     bool is_valid_tag = (tag != "");
@@ -55,25 +61,19 @@ void ScoreWindow::process_tag(){
         qDebug() << "Maximum number of teams made.  Time to update the window instead.";
 
         // Hide the widgets responsible for displaying/adding teams
-        this->ui->submit_input_button->setVisible(false);
-        this->ui->tag_input->setVisible(false);
-        this->ui->enter_tag_label->setVisible(false);
+        this->set_team_additions_display(false);
 
         // Show widgets responsible for allocating points after all teams are made
-        this->ui->team_view->setVisible(true);
-        this->ui->point_view->setVisible(true);
-        this->ui->score_diff_display->setVisible(true);
-        this->ui->point_label->setVisible(true);
-        this->ui->point_input->setVisible(true);
-        this->ui->submit_point_button->setVisible(true);
-        this->ui->race_label->setVisible(true);
-        this->ui->copy_button->setVisible(true);
-        this->ui->limit_view->setVisible(true);
+        this->set_point_allocations_display(true);
         this->ui->point_input->setReadOnly(false);
         this->ui->point_input->setFocus();
 
         // Change race label to "Race {race_nbr}"
         this->ui->race_label->setText("Race " + QString::number(this->race_nbr));
+
+        // Change point label to "Enter tag for {placement} place:"
+        // On initial setup, always first place
+        this->ui->point_label->setText("Enter tag for 1st place:");
 
         // Create layout
         QBoxLayout* team_layout = new QHBoxLayout();
@@ -103,6 +103,10 @@ void ScoreWindow::process_tag(){
     }
 }
 
+/**
+ * @brief Determines the number of points earned based on placement
+ * @return the number of points earned per race.
+ */
 int ScoreWindow::get_points_from_placement(){
     switch(this->race_placement){
         case 1: return 15;
@@ -121,6 +125,9 @@ int ScoreWindow::get_points_from_placement(){
     }
 }
 
+/**
+ * @brief Sorts the teams by # of points acquired in descending order
+ */
 void ScoreWindow::update_score_differences(){
     // First, sort the teams by highest score
     vector<Team> temp = this->teams;
@@ -170,12 +177,15 @@ void ScoreWindow::delete_layouts(){
     }
 }
 
+/**
+ * @brief Processes a team member with specified tag based on their placement.
+ */
 void ScoreWindow::process_points(){
     // First, validate that the input matches with one of the tags
     // Also make sure that a team does not get allocated points more than necessary
     int team_idx = -1;
     for(size_t i = 0; i < this->teams.size() && team_idx == -1; i++){
-        if(this->teams.at(i).get_tag() == this->ui->point_input->toPlainText() && this->teams.at(i).get_limit() > 0){
+        if(this->teams.at(i).get_tag() == this->ui->point_input->toPlainText().trimmed() && this->teams.at(i).get_limit() > 0){
             team_idx = i;
         }
     }
@@ -196,14 +206,27 @@ void ScoreWindow::process_points(){
         updated_point_label->setText(QString::number(this->teams.at(team_idx).get_points()));
 
 
-        // Increment the race placement.  If the race placement exceeds 12, then reset back to 1, and then increment the race counter
+        // Increment the race placement
         this->race_placement++;
+
+        // Update the point label (different for 2nd and 3rd)
+        if(this->race_placement == 2)
+            this->ui->point_label->setText("Enter tag for 2nd place:");
+        else if(this->race_placement == 3)
+            this->ui->point_label->setText("Enter tag for 3rd place:");
+        else
+            this->ui->point_label->setText("Enter tag for " + QString::number(this->race_placement) + "th place:");
+
+        // If the race placement exceeds 12, then reset back to 1, and then increment the race counter
         if(this->race_placement > 12){
             this->race_placement = 1;
             this->race_nbr++;
 
             // Also update the race label
             this->ui->race_label->setText("Race " + QString::number(this->race_nbr));
+
+            // And the point label
+            this->ui->point_label->setText("Enter tag for 1st place:");
 
             // For all teams, reset the limit and also reset the limit label
             for(size_t i = 0; i < this->teams.size(); i++){
@@ -219,6 +242,7 @@ void ScoreWindow::process_points(){
                 this->ui->race_label->setText("Mogi is over");
                 this->ui->point_input->setReadOnly(true);
                 this->ui->main_menu_button->setVisible(true);
+                this->ui->point_label->setText("");
             }
 
 
@@ -232,10 +256,12 @@ void ScoreWindow::process_points(){
 
     }
     else{
-        QMessageBox msgBox;
-        msgBox.setWindowTitle("Error");
-        msgBox.setText("Error, requested team [" + this->ui->point_input->toPlainText() + "] does not exist or all team members have been allocated for this race already.");
-        msgBox.exec();
+        if(!this->ui->point_input->isReadOnly()){
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Error");
+            msgBox.setText("Error, requested team [" + this->ui->point_input->toPlainText().trimmed() + "] does not exist or all team members have been allocated for this race already.");
+            msgBox.exec();
+        }
     }
 
     // Focus back to the input and clear text
@@ -243,6 +269,9 @@ void ScoreWindow::process_points(){
     this->ui->point_input->setText("");
 }
 
+/**
+ * @brief Copies the score differentials from the readonly text box onto the clipboard
+ */
 void ScoreWindow::copy_score_differentials(){
     // Copy the text from the score_diff_display onto the clipboard
     QClipboard* clipboard = QGuiApplication::clipboard();
@@ -256,6 +285,10 @@ void ScoreWindow::copy_score_differentials(){
     qDebug() << "Score differentials copied: " << clipboard->text();
 }
 
+/**
+ * @brief Upon finishing a mogi and clicking on the back to main menu button,
+ * a signal will be sent to return to the main menu
+ */
 void ScoreWindow::back_to_main_menu(){
     // Clear the old layouts
     this->delete_layouts();
@@ -268,27 +301,47 @@ void ScoreWindow::back_to_main_menu(){
     this->close();
 }
 
+/**
+ * @brief Either show or hide the widgets responsible for adding teams.
+ * @param flag - true to show, false to hide
+ */
+void ScoreWindow::set_team_additions_display(bool flag){
+    this->ui->submit_input_button->setVisible(flag);
+    this->ui->tag_input->setVisible(flag);
+    this->ui->enter_tag_label->setVisible(flag);
+}
 
+/**
+ * @brief Either show or hide the widgets responsible for allocating points to teams.
+ * @param flag - true to show, false to hide
+ */
+void ScoreWindow::set_point_allocations_display(bool flag){
+    this->ui->team_view->setVisible(flag);
+    this->ui->point_view->setVisible(flag);
+    this->ui->score_diff_display->setVisible(flag);
+    this->ui->point_label->setVisible(flag);
+    this->ui->point_input->setVisible(flag);
+    this->ui->submit_point_button->setVisible(flag);
+    this->ui->race_label->setVisible(flag);
+    this->ui->copy_button->setVisible(flag);
+    this->ui->limit_view->setVisible(flag);
+
+}
+
+/**
+ * @brief Main function that will show the ScoreWindow to add teams and/or allocate points to each team
+ * @param format - integer indicating the format (either 2, 3, 4, or 6)
+ */
 void ScoreWindow::execute(int format){
     // Initialize race states again
     this->race_nbr = 1;
     this->race_placement = 1;
 
     // Show all information regarding team additions
-    this->ui->submit_input_button->setVisible(true);
-    this->ui->tag_input->setVisible(true);
-    this->ui->enter_tag_label->setVisible(true);
+    this->set_team_additions_display(true);
 
     // Hide extra information until all teams have been added
-    this->ui->team_view->setVisible(false);
-    this->ui->point_view->setVisible(false);
-    this->ui->score_diff_display->setVisible(false);
-    this->ui->point_label->setVisible(false);
-    this->ui->point_input->setVisible(false);
-    this->ui->submit_point_button->setVisible(false);
-    this->ui->race_label->setVisible(false);
-    this->ui->copy_button->setVisible(false);
-    this->ui->limit_view->setVisible(false);
+    this->set_point_allocations_display(false);
     this->ui->main_menu_button->setVisible(false);
 
     // Add teams: set focus to the text input
@@ -305,6 +358,12 @@ void ScoreWindow::execute(int format){
     connect(this->ui->main_menu_button, SIGNAL(clicked()), this, SLOT(back_to_main_menu()));
 }
 
+/**
+ * @brief Customized event filter for specific actions
+ * @param object - which part of the window (widget) was affected?
+ * @param event - how was the object interacted with (key press or mouse press)?
+ * @return True if a specific event(s) on the object(s) was triggered or false otherwise
+ */
 bool ScoreWindow::eventFilter(QObject* object, QEvent* event){
     // Handle keyboard input events
     if((object == this->ui->tag_input || object == this->ui->point_input || object == this->ui->centralwidget) && event->type() == QEvent::KeyPress){
