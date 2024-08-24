@@ -6,7 +6,6 @@ void Processor::run_main_window(){
     this->main_window.execute();
 
     connect(&this->main_window, SIGNAL(get_format(int)), this, SLOT(run_score_window(int)), Qt::UniqueConnection);
-    connect(&this->score_window, SIGNAL(return_main_menu()), this, SLOT(rerun_main_window()), Qt::UniqueConnection);
 }
 
 
@@ -26,6 +25,8 @@ void Processor::run_score_window(int format){
     }
 
     this->score_window.execute(format);
+
+    connect(&this->score_window, SIGNAL(return_main_menu()), this, SLOT(rerun_main_window()), Qt::UniqueConnection);
 }
 
 void Processor::rerun_main_window(){
