@@ -55,6 +55,9 @@
       <height>22</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>You can also press '2'</string>
+    </property>
     <property name="text">
      <string>2v2</string>
     </property>
@@ -67,6 +70,9 @@
       <width>80</width>
       <height>22</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>You can also press '3'</string>
     </property>
     <property name="text">
      <string>3v3</string>
@@ -81,6 +87,9 @@
       <height>22</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>You can also press '4'</string>
+    </property>
     <property name="text">
      <string>4v4</string>
     </property>
@@ -93,6 +102,9 @@
       <width>80</width>
       <height>22</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>You can also press '6'</string>
     </property>
     <property name="text">
      <string>6v6</string>

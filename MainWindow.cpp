@@ -61,6 +61,26 @@ bool MainWindow::eventFilter(QObject* object, QEvent* event){
             this->close();
             return true;
         }
+        else if(keyEvent->key() == Qt::Key_2){
+            this->format = 2;
+            this->pass_format_to_processor();
+            return true;
+        }
+        else if(keyEvent->key() == Qt::Key_3){
+            this->format = 3;
+            this->pass_format_to_processor();
+            return true;
+        }
+        else if(keyEvent->key() == Qt::Key_4){
+            this->format = 4;
+            this->pass_format_to_processor();
+            return true;
+        }
+        else if(keyEvent->key() == Qt::Key_6){
+            this->format = 6;
+            this->pass_format_to_processor();
+            return true;
+        }
     }
 
     // Handle different buttons being clicked
