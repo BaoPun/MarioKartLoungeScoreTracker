@@ -1,7 +1,7 @@
 #include "MainWindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QString icon_loc, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
@@ -12,8 +12,8 @@ MainWindow::MainWindow(QWidget *parent)
     this->ui->v3_button->installEventFilter(this);
     this->ui->v4_button->installEventFilter(this);
     this->ui->v6_button->installEventFilter(this);
+    this->setWindowIcon(QIcon(icon_loc));
     this->format = -1;
-    //qApp->installEventFilter(this);
 }
 
 MainWindow::~MainWindow()
@@ -30,10 +30,10 @@ void MainWindow::execute(){
     this->show();
 
     // Add 4 connections: one corresponding to each button
-    connect(this->ui->v2_button, SIGNAL(clicked()), this, SLOT(pass_format_to_processor()));
-    connect(this->ui->v3_button, SIGNAL(clicked()), this, SLOT(pass_format_to_processor()));
-    connect(this->ui->v4_button, SIGNAL(clicked()), this, SLOT(pass_format_to_processor()));
-    connect(this->ui->v6_button, SIGNAL(clicked()), this, SLOT(pass_format_to_processor()));
+    connect(this->ui->v2_button, SIGNAL(clicked()), this, SLOT(pass_format_to_processor()), Qt::UniqueConnection);
+    connect(this->ui->v3_button, SIGNAL(clicked()), this, SLOT(pass_format_to_processor()), Qt::UniqueConnection);
+    connect(this->ui->v4_button, SIGNAL(clicked()), this, SLOT(pass_format_to_processor()), Qt::UniqueConnection);
+    connect(this->ui->v6_button, SIGNAL(clicked()), this, SLOT(pass_format_to_processor()), Qt::UniqueConnection);
 }
 
 /**

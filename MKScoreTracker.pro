@@ -26,7 +26,19 @@ FORMS += \
     mainwindow.ui \
     scorewindow.ui
 
+RESOURCES += \
+    resources.qrc
+
+# Needed for setting icon in executable
+ICON = ICANT_KEKW.ico
+RC_FILE = MarioKartLounge.rc
+
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    MarioKartLounge.rc
+

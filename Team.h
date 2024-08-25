@@ -20,7 +20,7 @@ public:
     void add_points(int);
 
 
-    void set_limit(int);
+    void set_limit(int, bool = false);
     void added_to_race();
 };
 

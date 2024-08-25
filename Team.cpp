@@ -28,10 +28,11 @@ void Team::add_points(int points){
 
 /**
  * @brief Either preset the limit to the format if adding the team or moving onto the next race.
+ * @brief Added reset parameter to indicate whether or not the limit needs to be reset (False by default).
  * @param limit
  */
-void Team::set_limit(int format){
-    if(this->limit == -1 || this->limit == 0)
+void Team::set_limit(int format, bool reset){
+    if(this->limit == -1 || this->limit == 0 || reset)
         this->limit = format;
 }
 

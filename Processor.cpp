@@ -1,6 +1,6 @@
 #include "./Processor.h"
 
-Processor::Processor(){}
+Processor::Processor() : main_window(":/ICANT_KEKW.ico"), score_window(":/ICANT_KEKW.ico"){}
 
 void Processor::run_main_window(){
     this->main_window.execute();

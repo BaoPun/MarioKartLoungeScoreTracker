@@ -1,13 +1,14 @@
 #include "./ScoreWindow.h"
 #include "ui_scorewindow.h"
 
-ScoreWindow::ScoreWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::ScoreWindow){
+ScoreWindow::ScoreWindow(QString icon_loc, QWidget* parent) : QMainWindow(parent), ui(new Ui::ScoreWindow){
     // Setting up the window + adding custom event filters
     this->ui->setupUi(this);
     this->setFixedSize(this->width(), this->height());
     this->ui->centralwidget->installEventFilter(this);
     this->ui->tag_input->installEventFilter(this);
     this->ui->point_input->installEventFilter(this);
+    this->setWindowIcon(QIcon(icon_loc));
 
     // Initializing race states
     this->race_nbr = 1;
@@ -198,13 +199,15 @@ void ScoreWindow::process_points(){
         // Also decrease the teams' limit per race by 1
         this->teams.at(team_idx).added_to_race();
 
-        // Update score differences
+        // ALso Update score differences
         this->update_score_differences();
 
         // Also update the point view
         QLabel* updated_point_label = static_cast<QLabel*>(this->ui->point_view->layout()->itemAt(team_idx)->widget());
         updated_point_label->setText(QString::number(this->teams.at(team_idx).get_points()));
 
+        // Also add the team to the race placements
+        this->current_placements.push_back(this->teams.at(team_idx).get_tag());
 
         // Increment the race placement
         this->race_placement++;
@@ -228,6 +231,9 @@ void ScoreWindow::process_points(){
             // And the point label
             this->ui->point_label->setText("Enter tag for 1st place:");
 
+            // And clear out the current placements vector from the previous race
+            this->current_placements.clear();
+
             // For all teams, reset the limit and also reset the limit label
             for(size_t i = 0; i < this->teams.size(); i++){
                 this->teams.at(i).set_limit(this->format);
@@ -236,12 +242,12 @@ void ScoreWindow::process_points(){
                 updated_limit_label->setText(QString::number(this->format) + "/" + QString::number(this->format));
             }
 
-            // Do something else when race 12 ends, but work on for later.
+            // Freeze all input once the mogi is over
             if(this->race_nbr > 12){
                 qDebug() << "Mogi is over";
                 this->ui->race_label->setText("Mogi is over");
                 this->ui->point_input->setReadOnly(true);
-                this->ui->main_menu_button->setVisible(true);
+                //this->ui->main_menu_button->setVisible(true);
                 this->ui->point_label->setText("");
             }
 
@@ -302,6 +308,54 @@ void ScoreWindow::back_to_main_menu(){
 }
 
 /**
+ * @brief In the event of a mistake, pressing the button will reset points for the current round.
+ */
+void ScoreWindow::reset_points(){
+    // Do not do anything if there is nothing in the vector
+    // Or if the mogi is over
+    // Or if we have not entered the first place placement for the current race
+    if(this->current_placements.empty() || this->race_nbr > 12 || this->race_placement == 1)
+        return;
+
+
+    // Work backwards: for each team result, subtract that many points.
+    // Find the team from the list of teams, and then subtract their points (multiply placement by -1)
+    for(int i = this->current_placements.size() - 1; i >= 0; i--){
+        for(size_t j = 0; j < this->teams.size(); j++){
+            // Once found, do the following:
+            // 1. Decrement the placement first (vital step)
+            // 2. Subtract the points, via multiplying the points earned by -1
+            // 3. Update the point displays
+            // 4. Update the score differentials
+            if(this->teams.at(j).get_tag() == this->current_placements.at(i)){
+                --this->race_placement;
+                this->teams.at(j).add_points(-1 * this->get_points_from_placement());
+                QLabel* updated_point_label = static_cast<QLabel*>(this->ui->point_view->layout()->itemAt(j)->widget());
+                updated_point_label->setText(QString::number(this->teams.at(j).get_points()));
+                this->update_score_differences();
+                break;
+            }
+        }
+    }
+
+    // Reset the limit for all teams and update the limit display
+    for(size_t i = 0; i < this->teams.size(); i++){
+        this->teams.at(i).set_limit(this->format, true);
+
+        QLabel* updated_limit_label = static_cast<QLabel*>(this->ui->limit_view->layout()->itemAt(i)->widget());
+        updated_limit_label->setText(QString::number(this->format) + "/" + QString::number(this->format));
+    }
+
+    // Once points have been reset, clear the current_placements vector
+    // Reset the race placement to 1st, and update the point label
+    // And bring focus back to the
+    this->current_placements.clear();
+    this->ui->point_label->setText("Enter tag for 1st place:");
+    this->race_placement = 1;
+    this->ui->point_input->setFocus();
+}
+
+/**
  * @brief Either show or hide the widgets responsible for adding teams.
  * @param flag - true to show, false to hide
  */
@@ -325,6 +379,7 @@ void ScoreWindow::set_point_allocations_display(bool flag){
     this->ui->race_label->setVisible(flag);
     this->ui->copy_button->setVisible(flag);
     this->ui->limit_view->setVisible(flag);
+    this->ui->pushButton->setVisible(flag);
 
 }
 
@@ -333,7 +388,7 @@ void ScoreWindow::set_point_allocations_display(bool flag){
  * @param format - integer indicating the format (either 2, 3, 4, or 6)
  */
 void ScoreWindow::execute(int format){
-    // Initialize race states again
+    // Initialize race states
     this->race_nbr = 1;
     this->race_placement = 1;
 
@@ -342,7 +397,9 @@ void ScoreWindow::execute(int format){
 
     // Hide extra information until all teams have been added
     this->set_point_allocations_display(false);
-    this->ui->main_menu_button->setVisible(false);
+
+    // Clear the placements vector
+    this->current_placements.clear();
 
     // Add teams: set focus to the text input
     this->format = format;
@@ -356,6 +413,7 @@ void ScoreWindow::execute(int format){
     connect(this->ui->submit_point_button, SIGNAL(clicked()), this, SLOT(process_points()));
     connect(this->ui->copy_button, SIGNAL(clicked()), this, SLOT(copy_score_differentials()));
     connect(this->ui->main_menu_button, SIGNAL(clicked()), this, SLOT(back_to_main_menu()));
+    connect(this->ui->pushButton, SIGNAL(clicked()), this, SLOT(reset_points()));
 }
 
 /**
@@ -401,6 +459,12 @@ bool ScoreWindow::eventFilter(QObject* object, QEvent* event){
                 this->ui->point_input->setFocus();
                 return true;
             }
+        }
+
+        // Pressing ESC should also trigger the "back to main menu" slot
+        else if(keyEvent->key() == Qt::Key_Escape){
+            this->back_to_main_menu();
+            return true;
         }
     }
 

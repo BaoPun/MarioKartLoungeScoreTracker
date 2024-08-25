@@ -29,7 +29,7 @@ signals:
 
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(QString, QWidget * = nullptr);
     ~MainWindow();
 
     void execute();
