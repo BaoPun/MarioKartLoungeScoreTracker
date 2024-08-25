@@ -348,7 +348,7 @@ void ScoreWindow::reset_points(){
 
     // Once points have been reset, clear the current_placements vector
     // Reset the race placement to 1st, and update the point label
-    // And bring focus back to the
+    // And bring focus back to the point input text field
     this->current_placements.clear();
     this->ui->point_label->setText("Enter tag for 1st place:");
     this->race_placement = 1;
