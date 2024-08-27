@@ -40,7 +40,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="submit_input_button">
+   <widget class="QPushButton" name="submit_team_button">
     <property name="geometry">
      <rect>
       <x>470</x>

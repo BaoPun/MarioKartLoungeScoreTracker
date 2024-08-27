@@ -34,8 +34,9 @@ void ScoreWindow::process_tag(){
     bool is_valid_tag = (tag != "");
 
     // Make sure that the team's tag is NOT already in the list
+    // Update: no 2 tags can start with the same letter. (K and KT will fail)
     for(size_t i = 0; i < this->teams.size() && is_valid_tag; i++){
-        if(tag.toLower() == this->teams.at(i).get_tag().toLower())
+        if(tag.toUpper().at(0) == this->teams.at(i).get_tag().toUpper().at(0))
             is_valid_tag = false;
     }
 
@@ -186,7 +187,7 @@ void ScoreWindow::process_points(){
     // Also make sure that a team does not get allocated points more than necessary
     int team_idx = -1;
     for(size_t i = 0; i < this->teams.size() && team_idx == -1; i++){
-        if(this->teams.at(i).get_tag() == this->ui->point_input->toPlainText().trimmed() && this->teams.at(i).get_limit() > 0){
+        if(this->teams.at(i).get_tag().at(0) == this->ui->point_input->toPlainText().trimmed().at(0) && this->teams.at(i).get_limit() > 0){
             team_idx = i;
         }
     }
@@ -360,7 +361,7 @@ void ScoreWindow::reset_points(){
  * @param flag - true to show, false to hide
  */
 void ScoreWindow::set_team_additions_display(bool flag){
-    this->ui->submit_input_button->setVisible(flag);
+    this->ui->submit_team_button->setVisible(flag);
     this->ui->tag_input->setVisible(flag);
     this->ui->enter_tag_label->setVisible(flag);
 }
@@ -409,7 +410,7 @@ void ScoreWindow::execute(int format){
     this->show();
 
     // Create a connection when the user presses the button(s)
-    connect(this->ui->submit_input_button, SIGNAL(clicked()), this, SLOT(process_tag()));
+    connect(this->ui->submit_team_button, SIGNAL(clicked()), this, SLOT(process_tag()));
     connect(this->ui->submit_point_button, SIGNAL(clicked()), this, SLOT(process_points()));
     connect(this->ui->copy_button, SIGNAL(clicked()), this, SLOT(copy_score_differentials()));
     connect(this->ui->main_menu_button, SIGNAL(clicked()), this, SLOT(back_to_main_menu()));
