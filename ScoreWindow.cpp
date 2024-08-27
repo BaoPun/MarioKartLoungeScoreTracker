@@ -187,7 +187,7 @@ void ScoreWindow::process_points(){
     // Also make sure that a team does not get allocated points more than necessary
     int team_idx = -1;
     for(size_t i = 0; i < this->teams.size() && team_idx == -1; i++){
-        if(this->teams.at(i).get_tag().at(0) == this->ui->point_input->toPlainText().trimmed().at(0) && this->teams.at(i).get_limit() > 0){
+        if(this->teams.at(i).get_tag().at(0).toUpper() == this->ui->point_input->toPlainText().trimmed().at(0).toUpper() && this->teams.at(i).get_limit() > 0){
             team_idx = i;
         }
     }
