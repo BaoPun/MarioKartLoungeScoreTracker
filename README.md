@@ -16,3 +16,5 @@ To install the application onto your own computer, either find the "MarioKartSco
 Follow instructions on the executable to download a folder called "Mario Kart Lounge Score Tracker" on your computer.  Note that the default location is set to "Program Files," but you may change the default location.  Once downloaded, double click the file called "MKScoreTracker.exe" to run the application.
 
 # How to Use (WIP)
+Upon opening the application, you will see the following image:<br>
+![home page]('./Tutorial+Images/home.png')
