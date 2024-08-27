@@ -12,7 +12,7 @@ Typically, each event has one of the following formats:
 This application will only handle the team-based formats (no FFA).
 
 # Installation
-To install the application onto your own computer, either find the "MarioKartScoreInstaller.exe" on the home page and download the executable, or [Click Here.](https://github.com/BaoPun/MarioKartLoungeScoreTracker/blob/main/MarioKartScoreInstaller.exe)<br><br>
+To install the application onto your own computer, either find the "MarioKartScoreInstaller.exe" on the home page and download the executable, or [Right Click Here To Download.](https://github.com/BaoPun/MarioKartLoungeScoreTracker/blob/main/MarioKartScoreInstaller.exe)<br><br>
 Follow instructions on the executable to download a folder called "Mario Kart Lounge Score Tracker" on your computer.  Note that the default location is set to "Program Files," but you may change the default location.  Once downloaded, double click the file called "MKScoreTracker.exe" to run the application.
 
 # How to Use (WIP)
