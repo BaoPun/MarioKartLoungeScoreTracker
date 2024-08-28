@@ -424,6 +424,7 @@ void ScoreWindow::execute(int format){
  * @return True if a specific event(s) on the object(s) was triggered or false otherwise
  */
 bool ScoreWindow::eventFilter(QObject* object, QEvent* event){
+
     // Handle keyboard input events
     if((object == this->ui->tag_input || object == this->ui->point_input || object == this->ui->centralwidget) && event->type() == QEvent::KeyPress){
         QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);

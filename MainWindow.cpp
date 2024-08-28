@@ -19,6 +19,8 @@ MainWindow::MainWindow(QString icon_loc, QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete this->ui;
+
+
 }
 
 /**
