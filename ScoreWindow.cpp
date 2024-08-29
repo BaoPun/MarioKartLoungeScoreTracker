@@ -12,7 +12,7 @@ ScoreWindow::ScoreWindow(QString icon_loc, QWidget* parent) : QMainWindow(parent
 
     // Initializing race states
     this->race_nbr = 1;
-    this->race_placement = 1;
+    this->race_placement = 1;   
 }
 
 /**
@@ -290,6 +290,9 @@ void ScoreWindow::copy_score_differentials(){
     msgBox.setText("Score differentials have been copied.");
     msgBox.exec();*/
     qDebug() << "Score differentials copied: " << clipboard->text();
+
+    // Bring focus back to the point input
+    this->ui->point_input->setFocus();
 }
 
 /**
@@ -312,6 +315,10 @@ void ScoreWindow::back_to_main_menu(){
  * @brief In the event of a mistake, pressing the button will reset points for the current round.
  */
 void ScoreWindow::reset_points(){
+    // Before doing anything, bring focus back to the point input and reset text field
+    this->ui->point_input->setFocus();
+    this->ui->point_input->setText("");
+
     // Do not do anything if there is nothing in the vector
     // Or if the mogi is over
     // Or if we have not entered the first place placement for the current race
@@ -349,11 +356,9 @@ void ScoreWindow::reset_points(){
 
     // Once points have been reset, clear the current_placements vector
     // Reset the race placement to 1st, and update the point label
-    // And bring focus back to the point input text field
     this->current_placements.clear();
     this->ui->point_label->setText("Enter tag for 1st place:");
     this->race_placement = 1;
-    this->ui->point_input->setFocus();
 }
 
 /**
@@ -410,10 +415,10 @@ void ScoreWindow::execute(int format){
     this->show();
 
     // Create a connection when the user presses the button(s)
-    connect(this->ui->submit_team_button, SIGNAL(clicked()), this, SLOT(process_tag()));
-    connect(this->ui->submit_point_button, SIGNAL(clicked()), this, SLOT(process_points()));
-    connect(this->ui->copy_button, SIGNAL(clicked()), this, SLOT(copy_score_differentials()));
-    connect(this->ui->main_menu_button, SIGNAL(clicked()), this, SLOT(back_to_main_menu()));
+    connect(this->ui->submit_team_button, SIGNAL(clicked()), this, SLOT(process_tag()), Qt::UniqueConnection);
+    connect(this->ui->submit_point_button, SIGNAL(clicked()), this, SLOT(process_points()), Qt::UniqueConnection);
+    connect(this->ui->copy_button, SIGNAL(clicked()), this, SLOT(copy_score_differentials()), Qt::UniqueConnection);
+    connect(this->ui->main_menu_button, SIGNAL(clicked()), this, SLOT(back_to_main_menu()), Qt::UniqueConnection);
     connect(this->ui->pushButton, SIGNAL(clicked()), this, SLOT(reset_points()));
 }
 

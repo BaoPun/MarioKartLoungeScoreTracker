@@ -53,6 +53,7 @@ private slots:
     void back_to_main_menu();
     void reset_points();
 
+
 signals:
     void return_main_menu();
 
