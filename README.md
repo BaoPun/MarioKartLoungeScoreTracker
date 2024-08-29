@@ -56,3 +56,4 @@ Once all 12 races have been submitted, the text box will no longer be interactab
 1. Added a feature to reset scores for a current race in the event that the user messes up.  Make sure to reset the race prior to entering in the 12th player.
 2. Added some hotkey commands for navigating through the application more seamlessly.  
 3. Entering in points for tags are now case insensitive.  Entering in 'g' will now recognize team G.  For this functionality to work, also updated tag registrations such that tags starting with the same character will no longer work.
+4. Added a QoL change to bring focus back to the text boxes whenever the application leaves focus in any way (ALT TAB, clicking on a different button, etc.)
