@@ -51,3 +51,8 @@ If you want to copy that point delta display and show it to others, simply click
 In the event that you have made a mistake when submitting placements for a race (for example, T was supposed to be 5th and Y was supposed to be 6th, but you accidentally submitted Y as 5th place), then you can press on the "Reset Current Race" button to undo all submitted scores for the current race.  This will also update the point delta display.  
 <br><br>
 Once all 12 races have been submitted, the text box will no longer be interactable.  You can choose to either quit the application or go back to the main menu.
+
+## Version Updates
+1. Added a feature to reset scores for a current race in the event that the user messes up.  Make sure to reset the race prior to entering in the 12th player.
+2. Added some hotkey commands for navigating through the application more seamlessly.  
+3. Entering in points for tags are now case insensitive.  Entering in 'g' will now recognize team G.  For this functionality to work, also updated tag registrations such that tags starting with the same character will no longer work.
