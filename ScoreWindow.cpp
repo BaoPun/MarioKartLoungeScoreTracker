@@ -10,6 +10,9 @@ ScoreWindow::ScoreWindow(QString icon_loc, QWidget* parent) : QMainWindow(parent
     this->ui->point_input->installEventFilter(this);
     this->setWindowIcon(QIcon(icon_loc));
 
+    // Changing background color
+    this->setStyleSheet("QWidget{background-color: lightblue;} QTextEdit{background-color: white;} QPushButton{background-color: #d8f06a} QListView{background-color: yellow} ");
+
     // Initializing race states
     this->race_nbr = 1;
     this->race_placement = 1;   
@@ -86,14 +89,17 @@ void ScoreWindow::process_tag(){
             QLabel* team_label = new QLabel();
             QLabel* point_label = new QLabel();
             QLabel* limit_label = new QLabel();
-            team_label->setText(this->teams.at(i).get_tag());
+            team_label->setText("<b>" + this->teams.at(i).get_tag() + "<b>");
             team_label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            team_label->setStyleSheet("background-color: yellow;");
             team_layout->addWidget(team_label);
             point_label->setText(QString::number(this->teams.at(i).get_points()));
             point_label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            point_label->setStyleSheet("background-color: yellow;");
             point_layout->addWidget(point_label);
             limit_label->setText(QString::number(this->format) + "/" + QString::number(this->format));
             limit_label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            limit_label->setStyleSheet("background-color: yellow;");
             limit_layout->addWidget(limit_label);
         }
         this->ui->team_view->setLayout(team_layout);
@@ -143,7 +149,7 @@ void ScoreWindow::update_score_differences(){
         score_display += " (+" + QString::number(temp.at(i - 1).get_points() - temp.at(i).get_points()) + "), ";
         score_display += "[" + temp.at(i).get_tag() + "] - " + QString::number(temp.at(i).get_points()) + " pts";
     }
-    this->ui->score_diff_display->setText(score_display);
+    this->ui->score_diff_display->setText("<b>" + score_display + "</b>");
 }
 
 /**

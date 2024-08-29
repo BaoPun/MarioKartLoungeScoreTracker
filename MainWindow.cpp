@@ -14,6 +14,8 @@ MainWindow::MainWindow(QString icon_loc, QWidget *parent)
     this->ui->v6_button->installEventFilter(this);
     this->setWindowIcon(QIcon(icon_loc));
     this->format = -1;
+
+    this->setStyleSheet("QWidget{background-color: lightblue;} QPushButton{background-color: #d8f06a}");
 }
 
 MainWindow::~MainWindow()
