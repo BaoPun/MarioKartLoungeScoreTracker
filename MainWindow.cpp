@@ -16,6 +16,8 @@ MainWindow::MainWindow(QString icon_loc, QWidget *parent)
     this->format = -1;
 
     this->setStyleSheet("QWidget{background-color: lightblue;} QPushButton{background-color: #d8f06a}");
+    this->ui->app_label->setText("<b>" + this->ui->app_label->text() + "</b>");
+    this->ui->description_label->setText("<b>" + this->ui->description_label->text() + "</b>");
 }
 
 MainWindow::~MainWindow()

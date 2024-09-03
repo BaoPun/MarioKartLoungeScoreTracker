@@ -10,8 +10,10 @@ ScoreWindow::ScoreWindow(QString icon_loc, QWidget* parent) : QMainWindow(parent
     this->ui->point_input->installEventFilter(this);
     this->setWindowIcon(QIcon(icon_loc));
 
-    // Changing background color
+    // Changing background color and other styles
     this->setStyleSheet("QWidget{background-color: lightblue;} QTextEdit{background-color: white;} QPushButton{background-color: #d8f06a} QListView{background-color: yellow} ");
+    this->ui->title_label->setText("<b>" + this->ui->title_label->text() + "</b>");
+    this->ui->enter_tag_label->setText("<b>" + this->ui->enter_tag_label->text() + "</b>");
 
     // Initializing race states
     this->race_nbr = 1;
@@ -74,11 +76,11 @@ void ScoreWindow::process_tag(){
         this->ui->point_input->setFocus();
 
         // Change race label to "Race {race_nbr}"
-        this->ui->race_label->setText("Race " + QString::number(this->race_nbr));
+        this->ui->race_label->setText("<b>Race " + QString::number(this->race_nbr) + "</b>");
 
         // Change point label to "Enter tag for {placement} place:"
         // On initial setup, always first place
-        this->ui->point_label->setText("Enter tag for 1st place:");
+        this->ui->point_label->setText("<b>Enter tag for 1st place:</b>");
 
         // Create layout
         QBoxLayout* team_layout = new QHBoxLayout();
@@ -146,7 +148,7 @@ void ScoreWindow::update_score_differences(){
     QString score_display;
     score_display += "[" + (temp.at(0).get_tag() + "] - " + QString::number(temp.at(0).get_points())) + " pts";
     for(size_t i = 1; i < this->teams.size(); i++){
-        score_display += " (+" + QString::number(temp.at(i - 1).get_points() - temp.at(i).get_points()) + "), ";
+        score_display += " (+" + QString::number(temp.at(i - 1).get_points() - temp.at(i).get_points()) + ") / ";
         score_display += "[" + temp.at(i).get_tag() + "] - " + QString::number(temp.at(i).get_points()) + " pts";
     }
     this->ui->score_diff_display->setText("<b>" + score_display + "</b>");
@@ -221,11 +223,11 @@ void ScoreWindow::process_points(){
 
         // Update the point label (different for 2nd and 3rd)
         if(this->race_placement == 2)
-            this->ui->point_label->setText("Enter tag for 2nd place:");
+            this->ui->point_label->setText("<b>Enter tag for 2nd place:</b>");
         else if(this->race_placement == 3)
-            this->ui->point_label->setText("Enter tag for 3rd place:");
+            this->ui->point_label->setText("<b>Enter tag for 3rd place:</b>");
         else
-            this->ui->point_label->setText("Enter tag for " + QString::number(this->race_placement) + "th place:");
+            this->ui->point_label->setText("<b>Enter tag for " + QString::number(this->race_placement) + "th place:</b>");
 
         // If the race placement exceeds 12, then reset back to 1, and then increment the race counter
         if(this->race_placement > 12){
@@ -233,10 +235,10 @@ void ScoreWindow::process_points(){
             this->race_nbr++;
 
             // Also update the race label
-            this->ui->race_label->setText("Race " + QString::number(this->race_nbr));
+            this->ui->race_label->setText("<b>Race " + QString::number(this->race_nbr) + "</b>");
 
             // And the point label
-            this->ui->point_label->setText("Enter tag for 1st place:");
+            this->ui->point_label->setText("<b>Enter tag for 1st place:</b>");
 
             // And clear out the current placements vector from the previous race
             this->current_placements.clear();
