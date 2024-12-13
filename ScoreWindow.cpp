@@ -151,7 +151,13 @@ void ScoreWindow::update_score_differences(){
         score_display += " (+" + QString::number(temp.at(i - 1).get_points() - temp.at(i).get_points()) + ") / ";
         score_display += "[" + temp.at(i).get_tag() + "] - " + QString::number(temp.at(i).get_points()) + " pts";
     }
-    this->ui->score_diff_display->setText("<b>" + score_display + "</b>");
+
+    // UPDATE: also display the # of races left
+    // If race nbr = 13, then race is over
+    if(this->race_nbr == 13)
+        this->ui->score_diff_display->setText("<b>" + score_display + " (Mogi is over)</b>");
+    else
+        this->ui->score_diff_display->setText("<b>" + score_display + " (" + QString::number(12 - (this->race_nbr - 1)) + " races left)</b>");
 }
 
 /**
@@ -208,9 +214,6 @@ void ScoreWindow::process_points(){
         // Also decrease the teams' limit per race by 1
         this->teams.at(team_idx).added_to_race();
 
-        // ALso Update score differences
-        this->update_score_differences();
-
         // Also update the point view
         QLabel* updated_point_label = static_cast<QLabel*>(this->ui->point_view->layout()->itemAt(team_idx)->widget());
         updated_point_label->setText(QString::number(this->teams.at(team_idx).get_points()));
@@ -260,7 +263,6 @@ void ScoreWindow::process_points(){
                 this->ui->point_label->setText("");
             }
 
-
         }
         else{
             // Update the limit view for the affected team
@@ -268,6 +270,8 @@ void ScoreWindow::process_points(){
             updated_limit_label->setText(QString::number(this->teams.at(team_idx).get_limit()) + "/" + QString::number(this->format));
         }
 
+        // After, update score differences
+        this->update_score_differences();
 
     }
     else{
